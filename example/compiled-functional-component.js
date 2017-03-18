@@ -1,12 +1,12 @@
 // ======================================= Component Module ====================================================== //
 // Export a function that creates new versions of this component
-module.exports = createComponent;
+module.exports = exampleComponent;
 
 // Create the initial template for each template/subtemplate of this component. These will be cloned to create new ones.
 const template0 = template0();
 const template1 = template1();
 const template2 = template2();
-const templates = require("templates");
+const templates = require("templates-4-functional");
 const Component = require("component");
 const textBinding = require("bindings/text");
 const ifBinding = require("bindings/if");
@@ -17,48 +17,78 @@ const eventBinding = require("bindings/event");
 // bound to any context. We need to allow the "outside" to be bound to one context, and the "inside" to be bound to the
 // component instance. This is done in chip-js so we can use something similar, but for this example I went simpler to
 // show the basic idea of the compiled element file.
-function createComponent() {
-  var component = new ExampleComponent(template0.create());
-  return component.element;
-}
+function exampleComponent() {
+  // This is the inner scope for the component. The element can still be bound on the outside.
+  var preferences = require("../data/preferences");
+  var team = require("../data/team");
 
-// Auto-generated component constructor
-function ExampleComponent(element) {
-  this.element = element;
-  element.component = this;
-  this.created();
-}
-
-// Code from the component file translated here
-Component.extend(ExampleComponent, {
-
-  created: function() {
-    this.preferences = require("../data/preferences");
-    this.team = require("../data/team");
-  },
-
-  onClick: function(name) {
-    alert('You clicked ' + name);
+  function onClick(player) {
+    alert('You clicked ' + player.name);
   }
-});
 
+  // Expressions used in the templates
+  function expression0(__formatters__, __globals__) {
+    var _ref1;
+    return ((_ref1 = preferences) == null ? void 0 : _ref1.showArticles);
+  }
+  function expression1(__formatters__, __globals__) {
+    var _ref1;
+    return ((_ref1 = team) == null ? void 0 : _ref1.players);
+  }
 
-// Expressions used in the templates
-function expression0(__formatters__, __globals__) {
-  var _ref1;
-  return ((_ref1 = this.preferences) == null ? void 0 : _ref1.showArticles);
+  function getView0() {
+    var view = template1.create();
+    return view;
+  }
+
+  function getView1(player) {
+
+    function expression0(__formatters__, __globals__) {
+      return (typeof onClick !== 'function' ? void 0 : onClick(player));
+    }
+    function expression1(__formatters__, __globals__) {
+      var _ref1;
+      return ((_ref1 = player) == null ? void 0 : _ref1.name);
+    }
+
+    var view = template2.create();
+
+    // Create a binding that will handle a click event
+    var bd0 = Object.create(eventBinding);
+    bd0.node = view;
+    bd0.expression = expression0;
+
+    // Create a binding that will update the text of the LI with the name of the given context
+    var bd1 = Object.create(textBinding);
+    bd1.node = view.childNodes[0];
+    bd1.expression = expression1;
+
+    // TODO if this view happens to also be a component, we are adding additional bindings to it that will mess with
+    // things if it is reused in other places. Also, this push method of adding bindings will keep adding duplicate
+    // bindings for each recycled view. Figure out a better way.
+    view.bindings.push(b0, b1);
+
+    return view;
+  }
+
+  var view = template0.create();
+
+  // Create the bindings that will show/hide the article and repeat player names
+  var bd0 = Object.create(ifBinding);
+  bd0.node = view.childNodes[1];
+  bd0.expression = expression0;
+  bd0.getView = getView0;
+
+  var bd1 = Object.create(repeatBinding);
+  bd1.node = view.childNodes[2].childNodes[0];
+  bd1.expression = expression1;
+  bd1.getView = getView1;
+
+  view.bindings.push(b0, b1);
+
+  return view;
 }
-function expression1(__formatters__, __globals__) {
-  var _ref1;
-  return ((_ref1 = this.team) == null ? void 0 : _ref1.players);
-}
-function expression2(__formatters__, __globals__) {
-  return (typeof this.onClick !== 'function' ? void 0 : this.onClick(this.player));
-}
-function expression3(__formatters__, __globals__) {
-  var _ref1;
-  return ((_ref1 = this.player) == null ? void 0 : _ref1.name);
-}
+
 
 // The templates used in this component
 function template0() {
@@ -87,17 +117,8 @@ function template0() {
   el30.textContent = "Footer";
   el0.appendChild(el30);
 
-  // Create the bindings that will show/hide the article and repeat player names
-  var bd0 = Object.create(ifBinding);
-  bd0._nodePath = [1];
-  bd0.expression = expression0;
-
-  var bd1 = Object.create(repeatBinding);
-  bd1._nodePath = [2, 0];
-  bd1.expression = expression1;
-
   // Make this element a template
-  return templates.make(el0, [bd0, bd1]);
+  return templates.make(el0);
 }
 
 
@@ -122,7 +143,7 @@ function template1() {
   el0.appendChild(el5);
 
   // This template has no bindings, but it still adhears to the same API
-  return templates.make(el0, []);
+  return templates.make(el0);
 }
 
 
@@ -132,15 +153,6 @@ function template2() {
   var el1 = document.createTextNode("");
   el0.appendChild(el1);
 
-  var bd0 = Object.create(eventBinding);
-  bd0._nodePath = [];
-  bd0.expression = expression2;
-
-  // Create a binding that will update the text of the LI with the name of the given context
-  var bd1 = Object.create(textBinding);
-  bd1._nodePath = [0];
-  bd1.expression = expression3;
-
   // Make this element a template
-  return templates.make(el0, [bd0, bd1]);
+  return templates.make(el0);
 }
