@@ -36,3 +36,26 @@ function component() {
 Since we are precompiling we can put the expression functions inside the component function closure so their scope is
 the same. The expressions within the for-loop would be functions inside the expression that runs the for loop, allowing
 them to inherit the scope from their outer function but still have the local `player` variable.
+
+I could take capitalized tag-names and convert them into local function calls for elements. E.g. from react:
+```
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+function App() {
+  return (
+    <div>
+      <Welcome name="Sara" />
+      <Welcome name="Cahal" />
+      <Welcome name="Edite" />
+    </div>
+  );
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+```
+
