@@ -53,10 +53,11 @@ function expression1(__formatters__, __globals__) {
   return ((_ref1 = this.team) == null ? void 0 : _ref1.players);
 }
 function expression2(__formatters__, __globals__) {
-  return this.onClick(this.name);
+  return (typeof this.onClick !== 'function' ? void 0 : this.onClick(this.player));
 }
 function expression3(__formatters__, __globals__) {
-  return this.name;
+  var _ref1;
+  return ((_ref1 = this.player) == null ? void 0 : _ref1.name);
 }
 
 // The templates used in this component
