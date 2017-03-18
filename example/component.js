@@ -9,8 +9,8 @@ Component.extend(ExampleComponent, {
     this.team = require("../data/team");
   },
 
-  onClick: function(name) {
-    alert('You clicked ' + name);
+  onClick: function(player) {
+    alert('You clicked ' + player.name);
   },
 
   template: function() {
